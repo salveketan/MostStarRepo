@@ -10,21 +10,24 @@ import {
 import { useState } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
+import Pagination from './Pagination'
 
 const MainPage = () => {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState([])
+    const [page, setPage] = useState(1)
 
     useEffect(() => {
-        axios.get("https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc").then((r) => {
+        axios.get(`https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc&page=${page}`).then((r) => {
             setLoading(false)
             setData(r.data)
         }).catch((e) => {
             setLoading(true)
             console.log(e);
         })
-    }, [])
+    }, [page])
 
+    // console.log(page);
 
     return (
         <div>
@@ -33,6 +36,11 @@ const MainPage = () => {
                     <Heading as='h1' size='lg' fontFamily={"inherit"} color="black">
                         Most Starred Repos
                     </Heading>
+                </Box>
+                <Box>
+                    <button disabled={page == 1} onClick={() => setPage(p => p - 1)}>Prev</button>
+                    <Pagination lastpage={4} currentPage={page} onPageChange={setPage} />
+                    <button onClick={() => setPage(p => p + 1)}>Next</button>
                 </Box>
                 {loading ?
                     <h1 style={{ color: "black" }}>Loading.....</h1>
@@ -80,6 +88,11 @@ const MainPage = () => {
                         )}
                     </Box>
                 }
+                <Box>
+                    <button disabled={page == 1} onClick={() => setPage(p => p - 1)}>Prev</button>
+                    <Pagination lastpage={4} currentPage={page} onPageChange={setPage} />
+                    <button onClick={() => setPage(p => p + 1)}>Next</button>
+                </Box>
             </Box>
         </div>
     )
